@@ -62,4 +62,4 @@ description: >
 
 ## 維護
 
-在原始專案維護腳本或模板後執行 `node --test "[Skill根目錄]/tests/project.test.mjs"`；精簡安裝未含 tests 時回原始專案執行。更新全域安裝副本後，既有儀表板若因模板版本不同而無法通過 check，需重新 build。變更狀態規則時同步修訂資料契約與測試；不要靜默改變 contract_version 1 的既有意義。
+維護腳本或模板後執行 `node --test "[Skill根目錄]/tests/project.test.mjs"`；Git clone 安裝已包含 tests。全域安裝與更新命令見 [README.md](README.md)，不同 clone 不會自動同步。更新全域安裝後，既有儀表板若因模板版本不同而無法通過 check，需重新 build。變更狀態規則時同步修訂資料契約與測試；不要靜默改變 contract_version 1 的既有意義。

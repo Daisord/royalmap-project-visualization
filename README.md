@@ -6,7 +6,7 @@
 
 ## 使用
 
-需要 Node.js 22+，不需 npm install。先依下方「全域安裝」安裝 Skill；完整工作流程見 [SKILL.md](SKILL.md)。
+需要 Node.js 22+；以 Git 安裝及更新時另需 Git，不需 npm install。先依下方「全域安裝」安裝 Skill；完整工作流程見 [SKILL.md](SKILL.md)。
 
 可在任一專案中提示 Codex：
 
@@ -46,23 +46,29 @@ check 同時核對來源、JSON 與實際 HTML；HTML 缺漏、與 JSON 不一�
 
 依 [OpenAI 官方 Skill 說明](https://learn.chatgpt.com/docs/build-skills)，`~/.agents/skills/` 是目前使用者跨專案共用的技能目錄。Windows 預設位置為 `%USERPROFILE%\.agents\skills\`；這裡的「全域」指目前使用者的本機 Codex，不會自動同步到其他使用者、電腦或雲端環境。
 
-從本專案根目錄執行以下 PowerShell 命令，首次安裝到尚不存在的目標目錄：
+安裝 Git 與 Node.js 22+ 後，可從任一目錄執行以下 PowerShell 命令，直接 clone 到個人技能目錄：
 
 ```powershell
-$sourceRoot = (Get-Location).Path
 $installRoot = Join-Path $env:USERPROFILE '.agents/skills/royalmap-project-visualization'
 if (Test-Path -LiteralPath $installRoot) { throw "安裝目錄已存在，請先確認要更新的版本：$installRoot" }
-New-Item -ItemType Directory -Path $installRoot -Force | Out-Null
-foreach ($item in @('SKILL.md', 'README.md', 'LICENSE', 'agents', 'references', 'scripts', 'assets')) {
-  Copy-Item -LiteralPath (Join-Path $sourceRoot $item) -Destination $installRoot -Recurse
-}
+New-Item -ItemType Directory -Path (Split-Path -Parent $installRoot) -Force | Out-Null
+git clone https://github.com/Daisord/royalmap-project-visualization.git "$installRoot"
 ```
 
-保留目錄結構，不只複製 `SKILL.md`。`output/` 內是畫面驗證假資料及截圖，不納入安裝；`tests/` 留在原始專案供維護使用。此 Skill 不依賴原始專案的位置；未安裝 `royalmap-system-planning-document` 時也能讀取隨附契約並產生儀表板。
+Clone 會保留 `SKILL.md`、agents、references、scripts、assets 及 tests 的完整結構，不需另外複製檔案。`output/` 是本機畫面驗證假資料及截圖，已由 `.gitignore` 排除，不會隨 clone 下載。此 Skill 不依賴其他開發目錄的位置；未安裝 `royalmap-system-planning-document` 時也能讀取隨附契約並產生儀表板。
 
 Codex 通常會自動偵測新 Skill；若技能清單未出現，重新啟動 Codex。使用 `$royalmap-project-visualization` 明確指定，或以 RoyalMap 儀表板建立／更新需求讓 Codex 自動選用。避免同時在個人與專案技能目錄安裝同名副本，以免選錯版本。
 
-更新時，將上述同一組檔案與目錄從原始專案同步至安裝副本，勿把 `output/` 一併複製。原始專案修改不會自動更新全域安裝副本；模板更新後，既有儀表板可能需要重新 build 才能通過 check。
+更新已 clone 的全域安裝：
+
+```powershell
+$installRoot = Join-Path $env:USERPROFILE '.agents/skills/royalmap-project-visualization'
+git -C "$installRoot" pull --ff-only
+```
+
+其他開發目錄的修改需先推送到 GitHub，再於全域安裝目錄 pull；不同 clone 不會自動同步。`--ff-only` 在分支已分歧時會停止；若有本機修改使更新失敗，先保留並處理修改，不以強制重設覆蓋。原先用複製方式安裝、沒有 `.git` 的目錄不能直接 pull，需先將舊目錄改名備份，再依上方步驟 clone。
+
+模板更新後，既有儀表板可能需要重新 build 才能通過 check。需要驗證安裝時，可執行 `node --test "$installRoot/tests/project.test.mjs"`。
 
 ## 執行位置與權限
 
@@ -70,7 +76,7 @@ Codex 通常會自動偵測新 Skill；若技能清單未出現，重新啟動 C
 - 腳本及草稿使用加上引號的絕對路徑；Evidence 追加參數則使用相對於文件根目錄的路徑，例如 `node "$skillRoot/scripts/project.mjs" capture "$documentRoot" "evidence/test-result.txt"`。
 - Node.js 須可從 PATH 執行；安裝 Skill 不會安裝 Node.js。只需讀取 Skill 目錄，但草稿位置與目標專案的 `06-Visualization/` 必須可寫。
 - 若執行環境限制寫入其他專案，需讓該專案成為可寫工作區或依環境取得授權；輸出仍保存在目標文件目錄。
-- 維護時在原始專案執行 `node --test tests/project.test.mjs`；全域安裝無須包含測試或驗證截圖。
+- 維護時在原始專案執行 `node --test tests/project.test.mjs`；clone 的全域安裝也包含 tests，但不包含本機驗證截圖。
 
 ## 限制
 
