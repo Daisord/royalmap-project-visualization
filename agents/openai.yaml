@@ -1,0 +1,4 @@
+interface:
+  display_name: "RoyalMap 專案視覺化"
+  short_description: "將專案文件轉為可追溯的離線儀表板，掌握工作狀態、驗收審查與待確認問題"
+  default_prompt: "使用 $royalmap-project-visualization，依目前專案正式文件建立可追溯的離線儀表板，未知資訊標為待確認。"

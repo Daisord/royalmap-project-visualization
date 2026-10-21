@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>RoyalMap 專案中心</title>
+<style>
+:root{font-family:system-ui,"Microsoft JhengHei",sans-serif;color:#213244;background:#f4f6f8;line-height:1.65;--muted:#55677a;--line:#d8e0e7;--accent:#146c63}
+*{box-sizing:border-box}body{margin:0}a{color:#11675f;text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input,select{font:inherit}a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #b36d00;outline-offset:4px}.skip{position:absolute;left:1rem;top:-5rem;background:white;padding:1rem;z-index:3}.skip:focus{top:1rem}
+header{background:#142b3a;color:#fff;padding:2.5rem max(1.5rem,calc((100vw - 1160px)/2));border-bottom:5px solid #58b6a3}.eyebrow{letter-spacing:.14em;font-size:.8rem;color:#a8dacf;margin:0}h1{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.3;margin:.6rem 0;overflow-wrap:anywhere}header p{color:#d0dbe4;margin:.5rem 0}nav{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:1.5rem}nav a{color:#d6eee8;font-size:.95rem}
+main{max-width:1208px;margin:auto;padding:1.5rem}section{scroll-margin-top:1rem;margin-bottom:2rem}h2{font-size:1.4rem;margin:1.5rem 0 .8rem}h3{font-size:1rem;margin:0 0 .8rem}.notice{background:#fff6e5;border-left:4px solid #a96b16;padding:1rem 1.2rem;border-radius:4px}.muted{color:var(--muted);font-size:.9rem}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.2rem 0}.card,.panel{background:#fff;border:1px solid var(--line);border-radius:10px;padding:1.1rem 1.3rem}.card strong{display:block;font-size:2.2rem;line-height:1.2;margin:.4rem 0;color:var(--accent)}.card span{font-size:.9rem;color:var(--muted)}.toolbar{display:flex;flex-wrap:wrap;gap:1rem;align-items:end;margin-bottom:1rem}label{display:flex;flex-direction:column;gap:.3rem;font-size:.9rem}input,select{padding:.5rem .7rem;border:1px solid #8b9ba9;border-radius:5px;background:#fff;color:inherit;max-width:100%}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}table{border-collapse:collapse;width:100%;font-size:.92rem}th,td{text-align:left;padding:.85rem 1rem;border-bottom:1px solid var(--line);vertical-align:top;min-width:7rem;overflow-wrap:anywhere}th{background:#eaf0f3;color:#354c60;font-weight:650}tr:last-child td{border-bottom:0}td small{display:block;color:var(--muted)}.pill{display:inline-block;border:1px solid #9cb6b2;background:#edf6f3;color:#205b53;border-radius:5px;padding:.08rem .5rem;white-space:nowrap}.pill.warn{background:#fff2d9;border-color:#bf964c;color:#755014}.empty{padding:1.1rem;color:var(--muted);background:#fff;border:1px dashed #a3b2bd;border-radius:7px}.stack{display:grid;gap:.8rem}.stack p{margin:.3rem 0}.issues{padding-left:1.4rem}.issues li{margin:.8rem 0}.source{display:block;font-size:.83rem;margin-top:.3rem}details{margin-top:.7rem}summary{cursor:pointer;font-weight:600}ul{padding-left:1.3rem}footer{border-top:1px solid var(--line);padding:1.5rem;color:var(--muted);font-size:.85rem}#error{margin:2rem;background:#fff6e5;padding:1rem}
+@media(max-width:680px){header{padding:1.7rem 1.2rem}.cards{grid-template-columns:repeat(2,1fr);gap:.6rem}.card{padding:.8rem}main{padding:1rem}.toolbar label{flex:1;min-width:10rem}.card strong{font-size:1.8rem}th,td{padding:.7rem}.panel{padding:1rem}}
+@media print{header{background:white;color:#213244}header p,nav a{color:#213244}.toolbar,nav,.skip{display:none}body{background:white}.table-wrap{overflow:visible}details{display:block}section{break-inside:avoid}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">跳至主要內容</a>
+<header>
+  <p class="eyebrow">ROYALMAP / PROJECT CENTER</p>
+  <h1 id="project">專案中心</h1>
+  <p id="generated"></p>
+  <nav aria-label="頁面章節"><a href="#overview">專案總覽</a><a href="#work">工作進度</a><a href="#review">驗收審查</a><a href="#documents">文件索引</a><a href="#issues">待確認問題</a></nav>
+</header>
+<noscript><p class="notice">此儀表板需要 JavaScript。可改讀取 data/project-snapshot.json 或正式 Markdown。</p></noscript>
+<main id="main">
+  <section id="overview" aria-labelledby="overview-title">
+    <h2 id="overview-title">專案總覽</h2>
+    <p class="notice">離線快照 · 來源已於產生時核對。此頁無法自動察覺文件變更；再次使用前請執行來源 check。工作狀態與驗收仍以正式文件及證據為準。</p>
+    <p id="coverage" class="muted"></p>
+    <div id="cards" class="cards"></div>
+    <div id="state-counts" class="panel"></div>
+  </section>
+  <section id="work" aria-labelledby="work-title">
+    <h2 id="work-title">工作進度</h2>
+    <div class="toolbar">
+      <label>搜尋工作<input id="query" type="search" placeholder="名稱或工作識別碼"></label>
+      <label>工作狀態<select id="status"><option value="all">全部狀態</option></select></label>
+      <span id="work-count" class="muted" role="status" aria-live="polite"></span>
+    </div>
+    <div id="work-table"></div>
+  </section>
+  <section id="review" aria-labelledby="review-title"><h2 id="review-title">驗收審查</h2><p class="muted">依工作逐項呈現 Review、Findings、AC 證據與 Human Gate；未擷取不代表已通過。</p><div id="reviews" class="stack"></div></section>
+  <section id="documents" aria-labelledby="documents-title"><h2 id="documents-title">文件索引</h2><div id="document-table"></div></section>
+  <section id="issues" aria-labelledby="issues-title"><h2 id="issues-title">待確認問題</h2><div id="issue-list"></div></section>
+</main>
+<footer>RoyalMap Project Visualization · 契約 v1 · 正式來源 → JSON Snapshot → HTML。來源連結旁列出區段名稱供人工定位。</footer>
+<script id="snapshot" type="application/json">/*SNAPSHOT_JSON*/null</script>
+<script>
+'use strict';
+try {
+  const data = JSON.parse(document.getElementById('snapshot').textContent);
+  const units = data.work_units;
+  const labels = {pending:'待處理', 'in-progress':'進行中', verification:'待驗證', review:'待 Review', 'human-gate':'待人工驗收', completed:'完成', unknown:'待確認', passed:'通過', failed:'未通過', manual:'需人工驗證', 'accepted-exception':'例外已接受', 'changes-requested':'需修正', 'human-decision':'需人工判斷', conditional:'有條件通過', accepted:'已接受', rejected:'已拒絕', open:'待處理', resolved:'已修正', 'accepted-risk':'接受風險'};
+  const types = {index:'索引', system:'系統現況', planning:'規劃設計', 'in-progress':'開發中', completed:'已完成', 'development-log':'開發歷程'};
+  const node = (tag, value, className) => { const el=document.createElement(tag); if(value!==undefined) el.textContent=value; if(className) el.className=className; return el; };
+  const append = (id, child) => document.getElementById(id).append(child);
+  const status = value => node('span', labels[value] || '待確認', `pill${!value || ['unknown','pending','failed','changes-requested','human-decision','open'].includes(value)?' warn':''}`);
+  function source(ref) {
+    const a=node('a', `${ref.path} · ${ref.section}`, 'source');
+    a.href='../'+ref.path.split('/').map(encodeURIComponent).join('/');
+    return a;
+  }
+  function table(headers, rows) {
+    const wrap=node('div',undefined,'table-wrap'), t=node('table'), head=node('thead'), tr=node('tr');
+    headers.forEach(title=>{const th=node('th',title); th.scope='col'; tr.append(th);}); head.append(tr); t.append(head);
+    const body=node('tbody'); rows.forEach(row=>{const tr=node('tr'); row.forEach(value=>{const td=node('td'); if(value instanceof Node)td.append(value);else td.textContent=value??'待確認';tr.append(td);});body.append(tr);});t.append(body);wrap.append(t);return wrap;
+  }
+  function evidence(container, list) {
+    if(!list?.length){container.append(node('p','未記錄 Evidence','muted'));return;}
+    list.forEach(item=>{const p=node('p',item.summary);p.append(source(item.source));container.append(p);});
+  }
+  document.title=`${data.project} · RoyalMap 專案中心`;
+  document.getElementById('project').textContent=data.project;
+  document.getElementById('generated').textContent=`離線快照 / ${data.generated_at} / ${data.sources.length} 個來源`;
+  const scope={ 'not-extracted':'工作資料尚未擷取', partial:'工作資料部分擷取', complete:'已核對所列範圍內的全部工作' };
+  document.getElementById('coverage').textContent=`涵蓋範圍：${scope[data.coverage.work_units]}。${data.coverage.note}`;
+  const stats=[['正式文件',data.documents.length],['已擷取工作',units===null?'未擷取':units.length],['人工確認未完成',units===null?'未擷取':units.filter(u=>!u.human_gate||u.human_gate.status!=='accepted').length],['資料問題',data.issues.length]];
+  stats.forEach(([label,value])=>{const card=node('div',undefined,'card');card.append(node('span',label),node('strong',String(value)));append('cards',card);});
+  const counts=document.getElementById('state-counts');
+  if(units===null)counts.textContent='尚未整理工作狀態，不能計算完成率。';
+  else{counts.append(node('h3','已擷取工作狀態分布'));const p=node('p');Object.keys(statusesForWork()).forEach(value=>{const count=units.filter(u=>u.status===value).length;if(count)p.append(node('span',`${labels[value]} ${count}　`));});if(!units.length)p.textContent='所列範圍內沒有已擷取工作。';counts.append(p);}
+  function statusesForWork(){return {pending:1,'in-progress':1,verification:1,review:1,'human-gate':1,completed:1,unknown:1};}
+  const select=document.getElementById('status');Object.keys(statusesForWork()).forEach(key=>{const option=node('option',labels[key]);option.value=key;select.append(option);});
+  function showWork(){
+    const container=document.getElementById('work-table');container.replaceChildren();
+    if(units===null){container.append(node('p','工作資料尚未擷取，請先依正式文件整理 Snapshot。','empty'));return;}
+    const query=document.getElementById('query').value.toLocaleLowerCase();const list=units.filter(u=>(select.value==='all'||u.status===select.value)&&`${u.id} ${u.title}`.toLocaleLowerCase().includes(query));
+    document.getElementById('work-count').textContent=`顯示 ${list.length} / ${units.length} 筆已擷取工作`;
+    if(!list.length){container.append(node('p','沒有符合條件的工作。','empty'));return;}
+    container.append(table(['工作','狀態','驗證與審查','來源'],list.map(u=>{const name=node('div',u.title);name.append(node('small',u.id));const state=node('div');state.append(status(u.status),node('small',`來源：${u.source_status??'待確認'}`));return[name,state,`AC ${u.acceptance_criteria===null?'未擷取':u.acceptance_criteria.length+' 項'} / Review ${labels[u.review?.status]||'未擷取'}`,source(u.source)];})));
+  }
+  document.getElementById('query').addEventListener('input',showWork);select.addEventListener('change',showWork);showWork();
+  if(!units?.length)append('reviews',node('p',units===null?'驗收資料尚未擷取。':'所列範圍內沒有工作審查資料。','empty'));
+  for(const u of units||[]){
+    const panel=node('article',undefined,'panel');panel.append(node('h3',`${u.id} · ${u.title}`));
+    const review=node('p','Review：');review.append(status(u.review?.status));panel.append(review);
+    const gate=node('p','Human Gate：');gate.append(status(u.human_gate?.status));panel.append(gate);
+    if(u.human_gate){panel.append(node('p',`決策人：${u.human_gate.decision_by||'待確認'} / 日期：${u.human_gate.decision_at||'待確認'}`,'muted'));panel.append(node('p',u.human_gate.note||'尚無決策說明'));panel.append(source(u.human_gate.source));}
+    const detail=node('details');detail.append(node('summary','查看驗收條件、審查發現與證據'));
+    if(u.acceptance_criteria===null)detail.append(node('p','AC 尚未擷取。'));
+    for(const ac of u.acceptance_criteria||[]){const p=node('p',`${ac.id}：`);p.append(status(ac.status),source(ac.source));detail.append(p);evidence(detail,ac.evidence);}
+    if(u.review){detail.append(node('p',`Review 範圍：${u.review.scope}`));detail.append(source(u.review.source));evidence(detail,u.review.evidence);if(u.review.findings===null)detail.append(node('p','Findings 尚未擷取。'));else if(!u.review.findings.length)detail.append(node('p','已核對無 Review Finding。'));for(const f of u.review.findings||[]){const p=node('p',`${f.id} / ${f.severity} · ${f.summary}：`);p.append(status(f.status),source(f.source));detail.append(p);evidence(detail,f.evidence);}}
+    panel.append(detail);append('reviews',panel);
+  }
+  append('document-table',table(['文件','類型','來源狀態','更新日期','來源'],data.documents.map(d=>{const name=node('div',d.title);name.append(node('small',d.document_id||'ID 待確認'));return[name,types[d.document_type]||d.document_type,d.source_status,d.updated_at,source(d.source)];})));
+  if(!data.issues.length)append('issue-list',node('p','本次 Snapshot 未記錄資料問題。此結果不取代正式驗收。','empty'));
+  else{const list=node('ul',undefined,'issues');for(const item of data.issues){const li=node('li',item.message);li.append(source(item.source));list.append(li);}append('issue-list',list);}
+}catch(error){const message=document.createElement('p');message.id='error';message.textContent='無法讀取儀表板資料，請重新建立 Snapshot。';document.body.prepend(message);console.error(error);}
+</script>
+</body>
+</html>
